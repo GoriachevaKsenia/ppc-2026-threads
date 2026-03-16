@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/task/include/task.hpp"
 #include "nikitina_v_hoar_sort_batcher/common/include/common.hpp"
 
 namespace nikitina_v_hoar_sort_batcher {

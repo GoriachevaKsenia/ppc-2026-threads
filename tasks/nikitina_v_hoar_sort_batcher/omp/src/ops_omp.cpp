@@ -6,6 +6,8 @@
 #include <utility>
 #include <vector>
 
+#include "nikitina_v_hoar_sort_batcher/common/include/common.hpp"
+
 namespace nikitina_v_hoar_sort_batcher {
 
 namespace {
@@ -104,10 +106,12 @@ bool HoareSortBatcherOMP::RunImpl() {
     offsets[i + 1] = offsets[i] + base_chunk + (i < rem ? 1 : 0);
   }
 
-#pragma omp parallel num_threads(t) default(none) shared(output_, offsets)
+  std::vector<int> &local_output = output_;
+
+#pragma omp parallel num_threads(t) default(none) shared(local_output, offsets)
   {
     int tid = omp_get_thread_num();
-    std::sort(output_.begin() + offsets[tid], output_.begin() + offsets[tid + 1]);
+    std::sort(local_output.begin() + offsets[tid], local_output.begin() + offsets[tid + 1]);
   }
 
   BatcherMergePhase(output_, offsets, t);
