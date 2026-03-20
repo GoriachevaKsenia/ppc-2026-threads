@@ -1,6 +1,5 @@
 #include "kazennova_a_fox_algorithm/omp/include/ops_omp.hpp"
 
-#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <vector>
@@ -137,8 +136,8 @@ void KazennovaATestTaskOMP::MultiplyBlock(size_t a_idx, size_t b_idx, size_t c_i
 bool KazennovaATestTaskOMP::RunImpl() {
   size_t block_elements = static_cast<size_t>(block_size_) * block_size_;
 
-  for (size_t i = 0; i < c_blocks_.size(); ++i) {
-    c_blocks_[i] = 0.0;
+  for (auto& c_block : c_blocks_) {
+    c_block = 0.0;
   }
 
   for (int step = 0; step < block_count_; ++step) {
