@@ -123,10 +123,12 @@ bool KazennovaATestTaskOMP::PreProcessingImpl() {
 void KazennovaATestTaskOMP::MultiplyBlock(size_t a_idx, size_t b_idx, size_t c_idx, int bs) {
   for (int ii = 0; ii < bs; ++ii) {
     for (int kk = 0; kk < bs; ++kk) {
-      double a_val = a_blocks_[a_idx + (ii * bs) + kk];
+      size_t a_off = a_idx + (static_cast<size_t>(ii) * bs) + kk;
+      double a_val = a_blocks_[a_off];
+      size_t b_off = b_idx + (static_cast<size_t>(kk) * bs);
       for (int jj = 0; jj < bs; ++jj) {
-        c_blocks_[c_idx + (ii * bs) + jj] +=
-            a_val * b_blocks_[b_idx + (kk * bs) + jj];
+        c_blocks_[c_idx + (static_cast<size_t>(ii) * bs) + jj] +=
+            a_val * b_blocks_[b_off + jj];
       }
     }
   }
@@ -135,7 +137,7 @@ void KazennovaATestTaskOMP::MultiplyBlock(size_t a_idx, size_t b_idx, size_t c_i
 bool KazennovaATestTaskOMP::RunImpl() {
   size_t block_elements = static_cast<size_t>(block_size_) * block_size_;
 
-  std::ranges::fill(c_blocks_, 0.0);
+  std::fill(c_blocks_.begin(), c_blocks_.end(), 0.0);
 
   for (int step = 0; step < block_count_; ++step) {
     #pragma omp parallel for collapse(2) default(none) shared(step, block_elements)
