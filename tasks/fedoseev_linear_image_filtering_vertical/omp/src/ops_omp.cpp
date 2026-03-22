@@ -59,8 +59,7 @@ bool LinearImageFilteringVerticalOMP::RunImpl() {
   const int kernel_sum = 16;
   const int block_width = 64;
 
-#pragma omp parallel for schedule(static) default(none) shared(w, h, src, dst, kernel, kernel_sum) \
-    firstprivate(block_width)
+#pragma omp parallel for schedule(static) default(none) shared(w, h, src, dst, kernel, kernel_sum, block_width)
   for (int col_start = 0; col_start < w; col_start += block_width) {
     int col_end = std::min(col_start + block_width, w);
     for (int row = 0; row < h; ++row) {
