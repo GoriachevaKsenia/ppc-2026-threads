@@ -79,7 +79,7 @@ std::vector<std::vector<double>> SparseToDense(const SparseMatrixCCS &matrix) {
 }  // namespace
 
 class KotelnikovaARunPerfTestSEQ : public ppc::util::BaseRunPerfTests<InType, OutType> {
-  static constexpr int kMatrixSize = 450;
+  static constexpr int kMatrixSize = 700;
   static constexpr double kDensity = 0.1;
   InType input_data_;
   std::vector<std::vector<double>> expected_dense_result_;

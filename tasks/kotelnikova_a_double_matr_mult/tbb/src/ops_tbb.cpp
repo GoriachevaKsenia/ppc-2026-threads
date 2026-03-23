@@ -1,5 +1,8 @@
 #include "kotelnikova_a_double_matr_mult/tbb/include/ops_tbb.hpp"
 
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
+#include <tbb/parallel_scan.h>
 #include <tbb/tbb.h>
 
 #include <cmath>
@@ -111,19 +114,26 @@ void FillColumn(const std::vector<double> &column, double epsilon, std::vector<i
 
 }  // namespace
 
+// Оптимизированная версия с grain size и partitioner
 SparseMatrixCCS KotelnikovaATaskTBB::MultiplyMatrices(const SparseMatrixCCS &a, const SparseMatrixCCS &b) {
   SparseMatrixCCS result(a.rows, b.cols);
 
   const double epsilon = 1e-10;
+  const int grain_size = 8;  // Аналог chunk size в OpenMP
   std::vector<int> col_start(b.cols, 0);
 
-  tbb::parallel_for(tbb::blocked_range<int>(0, b.cols), [&](const tbb::blocked_range<int> &range) {
+  // Первый проход: подсчет ненулевых элементов с grain size и simple_partitioner
+  tbb::parallel_for(tbb::blocked_range<int>(0, b.cols, grain_size),
+                    [&](const tbb::blocked_range<int> &range) {
     for (int j = range.begin(); j < range.end(); ++j) {
       std::vector<double> column = ComputeColumn(a, b, j);
       col_start[j] = CountNonZero(column, epsilon);
     }
-  });
+  },
+                    tbb::simple_partitioner()  // Минимизирует overhead для небольших задач
+  );
 
+  // Префиксная сумма для построения col_ptrs
   std::vector<int> col_ptr(b.cols + 1, 0);
   for (int j = 0; j < b.cols; ++j) {
     col_ptr[j + 1] = col_ptr[j] + col_start[j];
@@ -134,12 +144,13 @@ SparseMatrixCCS KotelnikovaATaskTBB::MultiplyMatrices(const SparseMatrixCCS &a, 
   result.row_indices.resize(total_nnz);
   result.col_ptrs = col_ptr;
 
-  tbb::parallel_for(tbb::blocked_range<int>(0, b.cols), [&](const tbb::blocked_range<int> &range) {
+  // Второй проход: заполнение данных с grain size и simple_partitioner
+  tbb::parallel_for(tbb::blocked_range<int>(0, b.cols, grain_size), [&](const tbb::blocked_range<int> &range) {
     for (int j = range.begin(); j < range.end(); ++j) {
       std::vector<double> column = ComputeColumn(a, b, j);
       FillColumn(column, epsilon, result.row_indices, result.values, col_ptr[j]);
     }
-  });
+  }, tbb::simple_partitioner());
 
   return result;
 }
