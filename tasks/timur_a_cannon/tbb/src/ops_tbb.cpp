@@ -6,10 +6,11 @@
 #include <utility>
 #include <vector>
 
+
 namespace timur_a_cannon {
 
 static void MultiplyBlocks(const std::vector<std::vector<double>> &a, const std::vector<std::vector<double>> &b,
-                    std::vector<std::vector<double>> &c, int b_size) {
+                           std::vector<std::vector<double>> &c, int b_size) {
   for (int row = 0; row < b_size; ++row) {
     for (int k = 0; k < b_size; ++k) {
       double temp = a[row][k];
