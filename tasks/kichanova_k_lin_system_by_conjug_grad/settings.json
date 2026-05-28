@@ -1,7 +1,7 @@
 {
   "tasks": {
     "all": "disabled",
-    "omp": "enabled",
+    "omp": "disabled",
     "seq": "disabled",
     "stl": "enabled",
     "tbb": "disabled"
