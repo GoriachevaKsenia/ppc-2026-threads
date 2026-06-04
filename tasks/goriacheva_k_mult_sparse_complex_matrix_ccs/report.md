@@ -2,7 +2,8 @@
 
 - Student: Горячева Ксения Александровна, group: 3823Б1ФИ2
 - Variant: 7
-- Local reports: [seq/report.md](seq/report.md) · [omp/report.md](omp/report.md) · [tbb/report.md](tbb/report.md) · [stl/report.md](stl/report.md) · [all/report.md](all/report.md)
+- Local reports: [seq/report.md](seq/report.md) · [omp/report.md](omp/report.md) · 
+[tbb/report.md](tbb/report.md) · [stl/report.md](stl/report.md) · [all/report.md](all/report.md)
 
 ## 1. Введение
 Разреженные матрицы широко применяются в задачах вычислительной математики,
