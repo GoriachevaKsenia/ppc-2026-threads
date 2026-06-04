@@ -222,3 +222,4 @@ mpiexec -n 4 ./ppc_perf_tests --gtest_filter="*GoriachevaKMultSparseComplexMatri
 ## 9. Источники
 
  [Документация курса «Параллельное программирование»](https://learning-process.github.io/parallel_programming_course/ru/)
+
